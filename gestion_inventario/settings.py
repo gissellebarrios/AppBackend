@@ -28,7 +28,9 @@ SECRET_KEY = 'django-insecure-il)4_+=gs2&t%gt3o=(oc^snad#i867h(pmjt-358a2v($j=3*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost',  # Permitir acceso local
+    '127.0.0.1',  # Permitir acceso local
+    'pharmalogic.onrender.com',]
 
 
 # Application definition
