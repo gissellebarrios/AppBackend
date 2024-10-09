@@ -199,6 +199,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # O especificar dominios específicos
 CORS_ALLOWED_ORIGINS = [
+    'https://pharmalogic.onrender.com',
     'http://localhost:4200',
     'http://127.0.0.1:4200',
 ]
@@ -224,7 +225,8 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
 ]
 CSRF_TRUSTED_ORIGINS = ['http://localhost:4200',
-    'http://127.0.0.1:4200',]
+    'http://127.0.0.1:4200',
+     'https://pharmalogic.onrender.com',]
 
 CSRF_FAILURE_VIEW = 'inventario.views.my_csrf_failure_view'
 
