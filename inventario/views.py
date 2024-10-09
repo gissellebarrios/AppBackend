@@ -171,5 +171,6 @@ def generar_reporte_pdf(request):
 
 from django.http import HttpResponseForbidden
 
+@csrf_exempt
 def my_csrf_failure_view(request, reason=""):
     return HttpResponseForbidden("CSRF verification failed.")
