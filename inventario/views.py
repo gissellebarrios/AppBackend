@@ -104,11 +104,15 @@ class MedicamentoViewSet(viewsets.ModelViewSet):
     serializer_class = MedicamentoSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
+    def get_empresa(self):
         user = self.request.user
         if not hasattr(user, 'customuser') or not user.customuser.empresa:
-            raise PermissionDenied('El usuario no tiene empresa asociada')
-        return Medicamento.objects.filter(empresa=user.customuser.empresa)
+            raise PermissionDenied('El usuario no tiene una empresa asociada.')
+        return user.customuser.empresa
+
+    def get_queryset(self):
+        empresa = self.get_empresa()
+        return Medicamento.objects.filter(empresa=empresa).select_related('empresa').order_by('nombre')
     
 
     def perform_create(self, serializer):
@@ -117,17 +121,49 @@ class MedicamentoViewSet(viewsets.ModelViewSet):
             raise PermissionDenied('El usuario no tiene una empresa asociada.')
         serializer.save(empresa=user.customuser.empresa)
 
+    def get_object(self):
+        obj = super().get_object()
+        empresa = self.get_empresa()
+        if obj.empresa != empresa:
+            raise PermissionDenied('No tienes permiso para acceder a este medicamento.')
+        return obj
 
 
 class MovimientoViewSet(viewsets.ModelViewSet):
-    queryset = Movimiento.objects.all()
     serializer_class = MovimientoSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_empresa(self):
+        user = self.request.user
+        if not hasattr(user,'customuser') or not user.customuser.empresa:
+            raise PermissionDenied('El usuario no tiene una empresa asociada.')
+        return user.customuser.empresa
+
+    def get_queryset(self):
+        empresa = self.get_empresa()
+        return Movimiento.objects.filter(empresaid=empresa).order_by('fecha')
+
+    def perform_create(self, serializer):
+        empresa = self.get_empresa()
+        serializer.save(empresaid=empresa)
+
 class AlertasViewSet(viewsets.ModelViewSet):
-    queryset = Alertas.objects.all()
     serializer_class = Alertaserializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_empresa(self):
+        user = self.request.user
+        if not hasattr(user,'customuser') or not user.customuser.empresa:
+            raise PermissionDenied('El usuario no tiene una empresa asociada.')
+        return user.customuser.empresa
+
+    def get_queryset(self):
+        empresa = self.get_empresa()
+        return Movimiento.objects.filter(empresaid=empresa).order_by('medicamento')
+
+    def perform_create(self, serializer):
+        empresa = self.get_empresa()
+        serializer.save(empresaid=empresa)
 
 class AlertaListView(APIView):
     def get(self, request):
